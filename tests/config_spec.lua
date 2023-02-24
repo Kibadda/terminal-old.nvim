@@ -4,18 +4,16 @@ describe("config", function()
 
     config.set()
 
-    assert.equal(nil, config.options.log)
+    assert.equal(true, config.options.startinsert)
   end)
 
   it("has new values with custom config", function()
     local config = require "terminal.config"
 
-    local log = "~/other/log/location/name.log"
-
     config.set {
-      log = log,
+      startinsert = false,
     }
 
-    assert.equal(log, config.options.log)
+    assert.equal(false, config.options.startinsert)
   end)
 end)

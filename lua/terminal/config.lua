@@ -3,7 +3,6 @@ local M = {}
 function M.defaults()
   ---@class TerminalConfig
   local defaults = {
-    log = nil,
     options = {
       filetype = "term",
       winbar = "",
@@ -14,8 +13,30 @@ function M.defaults()
       signcolumn = "no",
       cursorline = false,
     },
+    keymaps = {
+      ["<C-h>"] = "<C-\\><C-n><C-w>h",
+      ["<C-j>"] = "<C-\\><C-n><C-w>j",
+      ["<C-k>"] = "<C-\\><C-n><C-w>k",
+      ["<C-l>"] = "<C-\\><C-n><C-w>l",
+    },
+    hooks = {
+      ---@type fun(): boolean
+      termopen = function()
+        return true
+      end,
+      ---@type fun(): boolean
+      termclose = function()
+        return true
+      end,
+      ---@type fun(): boolean
+      bufenter = function()
+        return true
+      end,
+    },
     startinsert = true,
     autoclose = true,
+    ---@type "split"|"vsplit"
+    bang_opens = "split",
   }
   return defaults
 end
