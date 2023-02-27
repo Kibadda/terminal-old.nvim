@@ -1,4 +1,4 @@
-*terminal.nvim.txt*      For Neovim >= 0.8.0     Last change: 2023 February 24
+*terminal.nvim.txt*      For Neovim >= 0.8.0     Last change: 2023 February 27
 
 ==============================================================================
 Table of Contents                            *terminal.nvim-table-of-contents*
