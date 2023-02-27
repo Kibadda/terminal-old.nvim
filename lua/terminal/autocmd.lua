@@ -1,13 +1,7 @@
 local M = {}
 
-local augroup = vim.api.nvim_create_augroup
-local autocmd = vim.api.nvim_create_autocmd
-
-local group = augroup("TerminalAutoGroup", { clear = true })
-
-function M.termopen()
-  autocmd("TermOpen", {
-    group = group,
+local autocmds = {
+  TermOpen = {
     callback = function(opts)
       local config = require "terminal.config"
 
@@ -29,38 +23,26 @@ function M.termopen()
         if config.options.startinsert then
           vim.cmd.startinsert()
         end
+      end
+    end,
+  },
+  TermClose = {
+    callback = function(opts)
+      local config = require "terminal.config"
 
-        if config.options.autoclose then
-          local split = vim.split(opts.file, ":")
-          if split[#split] == vim.opt.shell:get() then
-            M.termclose(opts.buf)
+      if vim.bo[opts.buf].filetype == (config.options.options.filetype or "term") then
+        if not config.options.hooks.termopen or config.options.hooks.termopen() then
+          if config.options.autoclose then
+            local split = vim.split(opts.file, ":")
+            if split[#split] == vim.opt.shell:get() then
+              vim.cmd.bd { bang = true }
+            end
           end
         end
       end
     end,
-  })
-end
-
-function M.termclose(buffer)
-  autocmd("TermClose", {
-    group = group,
-    buffer = buffer,
-    once = true,
-    callback = function()
-      local config = require "terminal.config"
-
-      if vim.bo.filetype == (config.options.options.filetype or "term") then
-        if not config.options.hooks.termopen or config.options.hooks.termopen() then
-          vim.cmd.bd { bang = true }
-        end
-      end
-    end,
-  })
-end
-
-function M.bufenter()
-  autocmd("BufEnter", {
-    group = group,
+  },
+  BufEnter = {
     pattern = "term://*",
     callback = function()
       local config = require "terminal.config"
@@ -71,7 +53,16 @@ function M.bufenter()
         end
       end
     end,
-  })
+  },
+}
+
+function M.register_autocmds()
+  local group = vim.api.nvim_create_augroup("TerminalAutoGroup", { clear = true })
+
+  for event, opts in pairs(autocmds) do
+    opts.group = group
+    vim.api.nvim_create_autocmd(event, opts)
+  end
 end
 
 return M
