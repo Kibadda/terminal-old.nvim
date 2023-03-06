@@ -43,6 +43,7 @@ end
 
 M.options = M.defaults()
 
+---@param user_config? TerminalConfig
 function M.set(user_config)
   M.options = vim.tbl_deep_extend("force", M.defaults(), user_config or {})
 end
